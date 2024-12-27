@@ -1,0 +1,173 @@
+.deal-details {
+	padding: 20px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.deal-details .header-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.deal-details .action-buttons {
+	display: flex;
+	gap: 8px;
+}
+
+.deal-details .icon-button {
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.deal-details .icon-button i {
+	font-size: 20px;
+}
+
+.deal-details .back-button {
+	background-color: #6c757d;
+	color: white;
+}
+
+.deal-details .back-button:hover {
+	background-color: #545b62;
+}
+
+.deal-details .edit-button {
+	background-color: #ffc107;
+	color: #212529;
+}
+
+.deal-details .edit-button:hover {
+	background-color: #e0a800;
+}
+
+.deal-details .delete-button {
+	background-color: #dc3545;
+	color: white;
+}
+
+.deal-details .delete-button:hover {
+	background-color: #c82333;
+}
+
+.deal-details .save-button {
+	background-color: #28a745;
+	color: white;
+}
+
+.deal-details .save-button:hover {
+	background-color: #218838;
+}
+
+.deal-details .cancel-button {
+	background-color: #6c757d;
+	color: white;
+}
+
+.deal-details .cancel-button:hover {
+	background-color: #545b62;
+}
+
+.deal-details .deal-info {
+	background-color: white;
+	padding: 20px;
+	border-radius: 4px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.deal-details h1 {
+	margin: 0 0 20px 0;
+	color: #333;
+}
+
+.deal-details .info-group {
+	margin-bottom: 15px;
+	display: flex;
+	align-items: center;
+}
+
+.deal-details .info-group label {
+	font-weight: 600;
+	color: #495057;
+	width: 200px;
+}
+
+.deal-details .info-group span {
+	color: #212529;
+}
+
+.deal-details .form-group {
+	margin-bottom: 15px;
+}
+
+.deal-details .form-group label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: 600;
+	color: #495057;
+}
+
+.deal-details .form-group input,
+.deal-details .form-group select {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.deal-details .form-group input[type='checkbox'] {
+	width: auto;
+}
+
+.deal-details .form-actions {
+	margin-top: 20px;
+	display: flex;
+	gap: 8px;
+}
+
+.deal-details .error-message {
+	padding: 12px;
+	margin-bottom: 20px;
+	background-color: #f8d7da;
+	border: 1px solid #f5c6cb;
+	border-radius: 4px;
+	color: #721c24;
+}
+
+.deal-details .status {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.deal-details .status-new {
+	background-color: #cce5ff;
+	color: #004085;
+}
+
+.deal-details .status-in_progress {
+	background-color: #fff3cd;
+	color: #856404;
+}
+
+.deal-details .status-completed {
+	background-color: #d4edda;
+	color: #155724;
+}
+
+.deal-details .status-cancelled {
+	background-color: #f8d7da;
+	color: #721c24;
+}

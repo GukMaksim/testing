@@ -1,0 +1,152 @@
+:root {
+	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+	color: #000000;
+	background-color: #f5f7fa;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	min-width: 320px;
+	min-height: 100vh;
+	background-color: #f5f7fa;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.app {
+	min-height: 100vh;
+	background-color: #f8f9fa;
+}
+
+.header {
+	background-color: #343a40;
+	padding: 1rem;
+	color: white;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+	margin: 0;
+	font-size: 1.5rem;
+}
+
+.header nav {
+	margin-top: 1rem;
+}
+
+.header nav a {
+	color: white;
+	text-decoration: none;
+	margin-right: 1rem;
+	padding: 0.5rem;
+	border-radius: 4px;
+	transition: background-color 0.2s;
+}
+
+.header nav a:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main {
+	padding: 20px;
+	/* max-width: 1200px; */
+	margin: 0 auto;
+}
+
+.loading {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	font-size: 1.2rem;
+	color: #6c757d;
+}
+
+.error-message {
+	padding: 12px;
+	margin-bottom: 20px;
+	background-color: #f8d7da;
+	border: 1px solid #f5c6cb;
+	border-radius: 4px;
+	color: #721c24;
+}
+
+/* Общие стили для иконочных кнопок */
+.icon-button {
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.icon-button i {
+	font-size: 20px;
+}
+
+.icon-button.primary {
+	background-color: #007bff;
+	color: white;
+}
+
+.icon-button.primary:hover {
+	background-color: #0056b3;
+}
+
+.icon-button.secondary {
+	background-color: #6c757d;
+	color: white;
+}
+
+.icon-button.secondary:hover {
+	background-color: #545b62;
+}
+
+.icon-button.warning {
+	background-color: #ffc107;
+	color: #212529;
+}
+
+.icon-button.warning:hover {
+	background-color: #e0a800;
+}
+
+.icon-button.danger {
+	background-color: #dc3545;
+	color: white;
+}
+
+.icon-button.danger:hover {
+	background-color: #c82333;
+}
+
+.icon-button.success {
+	background-color: #28a745;
+	color: white;
+}
+
+.icon-button.success:hover {
+	background-color: #218838;
+}
+
+/* Стили для групп кнопок */
+.action-buttons {
+	display: flex;
+	gap: 8px;
+}
+
+/* Стили для форм */
+.form-actions {
+	margin-top: 20px;
+	display: flex;
+	gap: 8px;
+}

@@ -1,0 +1,78 @@
+.home {
+	padding: 20px;
+}
+
+.home h1 {
+	margin-bottom: 20px;
+	color: #333;
+}
+
+.home table {
+	width: 100%;
+	border-collapse: collapse;
+	background-color: white;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.home th,
+.home td {
+	padding: 12px;
+	text-align: left;
+	border-bottom: 1px solid #eee;
+}
+
+.home th {
+	background-color: #f8f9fa;
+	font-weight: 600;
+	color: #495057;
+}
+
+.home tr:hover {
+	background-color: #f8f9fa;
+}
+
+.home .clickable {
+	cursor: pointer;
+	color: #007bff;
+}
+
+.home .clickable:hover {
+	text-decoration: underline;
+}
+
+.home .no-data {
+	text-align: center;
+	padding: 40px;
+	background-color: #f8f9fa;
+	border-radius: 4px;
+	color: #6c757d;
+	font-size: 16px;
+}
+
+.home .status {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.home .status-new {
+	background-color: #cce5ff;
+	color: #004085;
+}
+
+.home .status-in_progress {
+	background-color: #fff3cd;
+	color: #856404;
+}
+
+.home .status-completed {
+	background-color: #d4edda;
+	color: #155724;
+}
+
+.home .status-cancelled {
+	background-color: #f8d7da;
+	color: #721c24;
+}

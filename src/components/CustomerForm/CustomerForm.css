@@ -1,0 +1,177 @@
+.customer-form {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 30px;
+	background-color: #fff;
+	border-radius: 12px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.customer-form h2 {
+	color: #2c3e50;
+	text-align: center;
+	margin-bottom: 25px;
+	font-size: 1.8rem;
+	font-weight: 600;
+}
+
+.customer-form h3 {
+	color: #34495e;
+	margin: 20px 0;
+	padding-bottom: 12px;
+	border-bottom: 2px solid #eee;
+	font-size: 1.4rem;
+	font-weight: 500;
+}
+
+.form-section {
+	margin-bottom: 30px;
+	padding: 25px;
+	background-color: #f8f9fa;
+	border-radius: 8px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-section:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-row {
+	display: flex;
+	gap: 20px;
+	margin-bottom: 20px;
+}
+
+.form-row input {
+	flex: 1;
+}
+
+.form-group {
+	margin-bottom: 20px;
+}
+
+.form-group label {
+	display: block;
+	margin-bottom: 8px;
+	color: #2c3e50;
+	font-weight: 500;
+	font-size: 0.9rem;
+}
+
+.customer-form input {
+	width: 100%;
+	padding: 12px;
+	margin-bottom: 15px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	font-size: 14px;
+	transition: all 0.2s ease;
+}
+
+.customer-form input:hover {
+	border-color: #3498db;
+}
+
+.customer-form input:focus {
+	border-color: #3498db;
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.customer-form button {
+	width: 100%;
+	padding: 14px;
+	background-color: #3498db;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 16px;
+	font-weight: 500;
+	transition: all 0.2s ease;
+}
+
+.customer-form button:hover {
+	background-color: #2980b9;
+	transform: translateY(-1px);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.customer-form button:active {
+	transform: translateY(0);
+	box-shadow: none;
+}
+
+.form-actions {
+	display: flex;
+	gap: 15px;
+	margin-top: 30px;
+}
+
+.form-actions button {
+	flex: 1;
+}
+
+.form-actions button.cancel {
+	background-color: #e74c3c;
+}
+
+.form-actions button.cancel:hover {
+	background-color: #c0392b;
+}
+
+.required-field::after {
+	content: '*';
+	color: #e74c3c;
+	margin-left: 4px;
+}
+
+.form-error {
+	color: #e74c3c;
+	font-size: 0.9rem;
+	margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+	.customer-form {
+		padding: 20px;
+		margin: 10px;
+	}
+
+	.form-section {
+		padding: 20px;
+	}
+
+	.form-row {
+		flex-direction: column;
+		gap: 15px;
+	}
+
+	.form-row input {
+		width: 100%;
+	}
+
+	.form-actions {
+		flex-direction: column;
+	}
+
+	.customer-form button {
+		margin-bottom: 10px;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.customer-form {
+	animation: fadeIn 0.3s ease-out;
+}
