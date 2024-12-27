@@ -5,7 +5,7 @@ import { DealList } from './components/DealList/DealList.tsx';
 import { DealDetails } from './components/DealDetails/DealDetails.tsx';
 import { Home } from './components/Home/Home.tsx';
 import { api } from './services/api.ts';
-import type { Customer, Deal } from './types.ts';
+import type { Customer, Deal } from './types/index.ts';
 import './styles/App.css';
 
 export function App() {
