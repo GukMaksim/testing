@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { CustomerList } from './components/CustomerList/CustomerList.tsx';
+import { CustomerDetails } from './components/CustomerDetails/CustomerDetails.tsx';
 import { DealList } from './components/DealList/DealList.tsx';
 import { DealDetails } from './components/DealDetails/DealDetails.tsx';
+import { Reports } from './components/Reports/Reports.tsx';
 import { Home } from './components/Home/Home.tsx';
 import { api } from './services/api.ts';
 import type { Customer, Deal } from './types/index.ts';
@@ -26,7 +28,7 @@ export function App() {
 			setCustomers(customersData || []);
 			setDeals(dealsData || []);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при загрузке данных');
+			setError(err instanceof Error ? err.message : 'Помилка при завантаженні даних');
 		} finally {
 			setIsLoading(false);
 		}
@@ -38,7 +40,7 @@ export function App() {
 			await api.addCustomer(customer);
 			await loadData();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при добавлении клиента');
+			setError(err instanceof Error ? err.message : 'Помилка при додаванні клієнта');
 			throw err;
 		}
 	};
@@ -49,7 +51,7 @@ export function App() {
 			await api.updateCustomer(customer);
 			await loadData();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при обновлении клиента');
+			setError(err instanceof Error ? err.message : 'Помилка при оновленні клієнта');
 			throw err;
 		}
 	};
@@ -60,7 +62,7 @@ export function App() {
 			await api.deleteCustomer(id);
 			await loadData();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при удалении клиента');
+			setError(err instanceof Error ? err.message : 'Помилка при видаленні клієнта');
 			throw err;
 		}
 	};
@@ -71,7 +73,7 @@ export function App() {
 			await api.addDeal(deal);
 			await loadData();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при добавлении сделки');
+			setError(err instanceof Error ? err.message : 'Помилка при додаванні угоди');
 			throw err;
 		}
 	};
@@ -82,7 +84,7 @@ export function App() {
 			await api.updateDeal(deal);
 			await loadData();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при обновлении сделки');
+			setError(err instanceof Error ? err.message : 'Помилка при оновленні угоди');
 			throw err;
 		}
 	};
@@ -93,7 +95,7 @@ export function App() {
 			await api.deleteDeal(id);
 			await loadData();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при удалении сделки');
+			setError(err instanceof Error ? err.message : 'Помилка при видаленні угоди');
 			throw err;
 		}
 	};
@@ -101,7 +103,7 @@ export function App() {
 	if (isLoading) {
 		return (
 			<div className='loading'>
-				<p>Загрузка данных...</p>
+				<p>Завантаження даних...</p>
 			</div>
 		);
 	}
@@ -112,9 +114,10 @@ export function App() {
 				<header className='header'>
 					<h1>MiX CRM</h1>
 					<nav>
-						<Link to='/'>Главная</Link>
-						<Link to='/customers'>Клиенты</Link>
-						<Link to='/deals'>Сделки</Link>
+						<Link to='/'>Головна</Link>
+						<Link to='/customers'>Клієнти</Link>
+						<Link to='/deals'>Угоди</Link>
+						<Link to='/reports'>Звіти</Link>
 					</nav>
 				</header>
 
@@ -143,6 +146,17 @@ export function App() {
 							}
 						/>
 						<Route
+							path='/customers/:id'
+							element={
+								<CustomerDetails
+									customers={customers}
+									deals={deals}
+									onUpdateCustomer={updateCustomer}
+									onDeleteCustomer={deleteCustomer}
+								/>
+							}
+						/>
+						<Route
 							path='/deals'
 							element={
 								<DealList
@@ -162,6 +176,15 @@ export function App() {
 									customers={customers}
 									onUpdateDeal={updateDeal}
 									onDeleteDeal={deleteDeal}
+								/>
+							}
+						/>
+						<Route
+							path='/reports'
+							element={
+								<Reports
+									deals={deals}
+									customers={customers}
 								/>
 							}
 						/>

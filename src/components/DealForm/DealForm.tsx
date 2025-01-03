@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Customer, Deal } from '../../types';
+import { calculateMargin, calculateCommission } from '../../utils/formatters.js';
 import './DealForm.css';
 
 interface DealFormProps {
@@ -22,7 +23,21 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 		isPaid: deal?.isPaid || false,
 		isDelivered: deal?.isDelivered || false,
 		presale: deal?.presale || '',
+		isProject: deal?.isProject || false,
+		additionalCosts: deal?.additionalCosts || 0,
+		margin: deal?.margin || 0,
+		commission: deal?.commission || 0,
 	});
+
+	useEffect(() => {
+		const margin = calculateMargin(formData.amount, formData.costPrice, formData.additionalCosts);
+		const commission = calculateCommission(margin, formData.isProject);
+		setFormData((prev) => ({
+			...prev,
+			margin,
+			commission,
+		}));
+	}, [formData.amount, formData.costPrice, formData.additionalCosts, formData.isProject]);
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
 		const { name, value, type } = event.target;
@@ -40,7 +55,7 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 			await onSubmit(formData);
 			setError(null);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при сохранении сделки');
+			setError(err instanceof Error ? err.message : 'Помилка при збереженні угоди');
 		}
 	};
 
@@ -48,19 +63,19 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 		<form
 			onSubmit={handleSubmit}
 			className='deal-form'>
-			<h2>{deal ? 'Редактировать сделку' : 'Новая сделка'}</h2>
+			<h2>{deal ? 'Редагувати угоду' : 'Нова угода'}</h2>
 
 			{error && <div className='error-message'>{error}</div>}
 
 			<div className='form-group'>
-				<label htmlFor='customerId'>Клиент:</label>
+				<label htmlFor='customerId'>Клієнт:</label>
 				<select
 					id='customerId'
 					name='customerId'
 					value={formData.customerId}
 					onChange={handleInputChange}
 					required>
-					<option value=''>Выберите клиента</option>
+					<option value=''>Виберіть клієнта</option>
 					{customers.map((customer) => (
 						<option
 							key={customer.id}
@@ -72,7 +87,7 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='description'>Описание:</label>
+				<label htmlFor='description'>Опис:</label>
 				<textarea
 					id='description'
 					name='description'
@@ -84,7 +99,7 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 
 			<div className='form-row'>
 				<div className='form-group'>
-					<label htmlFor='amount'>Сумма:</label>
+					<label htmlFor='amount'>Сума:</label>
 					<input
 						type='number'
 						id='amount'
@@ -98,7 +113,7 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 				</div>
 
 				<div className='form-group'>
-					<label htmlFor='costPrice'>Себестоимость:</label>
+					<label htmlFor='costPrice'>Собівартість:</label>
 					<input
 						type='number'
 						id='costPrice'
@@ -133,10 +148,10 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 						value={formData.status}
 						onChange={handleInputChange}
 						required>
-						<option value='new'>Новая</option>
-						<option value='in_progress'>В работе</option>
+						<option value='new'>Нова</option>
+						<option value='in_progress'>В роботі</option>
 						<option value='completed'>Завершена</option>
-						<option value='cancelled'>Отменена</option>
+						<option value='cancelled'>Скасована</option>
 					</select>
 				</div>
 			</div>
@@ -150,7 +165,7 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 							checked={formData.hasCommercialProposal}
 							onChange={handleInputChange}
 						/>
-						Коммерческое предложение
+						КП
 					</label>
 				</div>
 
@@ -162,7 +177,7 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 							checked={formData.isPaid}
 							onChange={handleInputChange}
 						/>
-						Оплачено
+						Оплата
 					</label>
 				</div>
 
@@ -174,8 +189,57 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 							checked={formData.isDelivered}
 							onChange={handleInputChange}
 						/>
-						Доставлено
+						Поставка
 					</label>
+				</div>
+
+				<div className='form-group'>
+					<label>
+						<input
+							type='checkbox'
+							name='isProject'
+							checked={formData.isProject}
+							onChange={handleInputChange}
+						/>
+						Проєкт
+					</label>
+				</div>
+			</div>
+
+			<div className='form-row'>
+				<div className='form-group'>
+					<label htmlFor='additionalCosts'>ДР:</label>
+					<input
+						type='number'
+						id='additionalCosts'
+						name='additionalCosts'
+						value={formData.additionalCosts}
+						onChange={handleInputChange}
+						min='0'
+						step='0.01'
+					/>
+				</div>
+
+				<div className='form-group'>
+					<label htmlFor='margin'>Маржа:</label>
+					<input
+						type='number'
+						id='margin'
+						name='margin'
+						value={formData.margin.toFixed(2)}
+						readOnly
+					/>
+				</div>
+
+				<div className='form-group'>
+					<label htmlFor='commission'>Коміси:</label>
+					<input
+						type='number'
+						id='commission'
+						name='commission'
+						value={formData.commission.toFixed(2)}
+						readOnly
+					/>
 				</div>
 			</div>
 
@@ -194,14 +258,14 @@ export function DealForm({ customers, deal, onSubmit, onCancel }: DealFormProps)
 				<button
 					type='submit'
 					className='icon-button success'
-					title='Сохранить'>
+					title='Зберегти'>
 					<i className='material-icons'>save</i>
 				</button>
 				<button
 					type='button'
 					onClick={onCancel}
 					className='icon-button secondary'
-					title='Отмена'>
+					title='Скасувати'>
 					<i className='material-icons'>close</i>
 				</button>
 			</div>

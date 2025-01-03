@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Customer, Deal } from '../../types';
+import {
+	formatDate,
+	formatMoney,
+	getStatusText,
+	calculateMargin,
+	calculateCommission,
+} from '../../utils/formatters.js';
 import './DealDetails.css';
 
 interface DealDetailsProps {
@@ -21,14 +28,26 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 
 	const [editedDeal, setEditedDeal] = useState<Deal | null>(deal || null);
 
+	useEffect(() => {
+		if (editedDeal) {
+			const margin = calculateMargin(editedDeal.amount, editedDeal.costPrice, editedDeal.additionalCosts);
+			const commission = calculateCommission(margin, editedDeal.isProject);
+			setEditedDeal((prev) => ({
+				...prev!,
+				margin,
+				commission,
+			}));
+		}
+	}, [editedDeal?.amount, editedDeal?.costPrice, editedDeal?.additionalCosts, editedDeal?.isProject]);
+
 	if (!deal) {
 		return (
 			<div className='deal-details'>
-				<h1>Сделка не найдена</h1>
+				<h1>Угода не знайдена</h1>
 				<button
 					onClick={() => navigate('/deals')}
 					className='icon-button back-button'
-					title='Вернуться к списку'>
+					title='Повернутись до списку'>
 					<i className='material-icons'>arrow_back</i>
 				</button>
 			</div>
@@ -56,12 +75,12 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 			setIsEditing(false);
 			setError(null);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при обновлении сделки');
+			setError(err instanceof Error ? err.message : 'Помилка при оновленні угоди');
 		}
 	};
 
 	const handleDelete = async () => {
-		if (!window.confirm('Вы уверены, что хотите удалить эту сделку?')) {
+		if (!window.confirm('Ви впевнені, що хочете видалити цю угоду?')) {
 			return;
 		}
 
@@ -69,29 +88,8 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 			await onDeleteDeal(deal.id);
 			navigate('/deals');
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при удалении сделки');
+			setError(err instanceof Error ? err.message : 'Помилка при видаленні угоди');
 		}
-	};
-
-	const formatDate = (date: string) => {
-		return new Date(date).toLocaleDateString('ru-RU');
-	};
-
-	const formatMoney = (amount: number) => {
-		return new Intl.NumberFormat('ru-RU', {
-			style: 'currency',
-			currency: 'UAH',
-		}).format(amount);
-	};
-
-	const getStatusText = (status: string) => {
-		const statusMap: Record<string, string> = {
-			new: 'Новая',
-			in_progress: 'В работе',
-			completed: 'Завершена',
-			cancelled: 'Отменена',
-		};
-		return statusMap[status] || status;
 	};
 
 	return (
@@ -100,7 +98,7 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 				<button
 					onClick={() => navigate('/deals')}
 					className='icon-button back-button'
-					title='Вернуться к списку'>
+					title='Повернутись до списку'>
 					<i className='material-icons'>arrow_back</i>
 				</button>
 				<div className='action-buttons'>
@@ -109,13 +107,13 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 							<button
 								onClick={() => setIsEditing(true)}
 								className='icon-button edit-button'
-								title='Редактировать'>
+								title='Редагувати'>
 								<i className='material-icons'>edit</i>
 							</button>
 							<button
 								onClick={handleDelete}
 								className='icon-button delete-button'
-								title='Удалить'>
+								title='Видалити'>
 								<i className='material-icons'>delete</i>
 							</button>
 						</>
@@ -142,7 +140,7 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 							<select
 								value={editedDeal.customerId}
 								onChange={(e) => handleInputChange(e, 'customerId')}>
-								<option value=''>Выберите клиента</option>
+								<option value=''>Виберіть клієнта</option>
 								{customers.map((c) => (
 									<option
 										key={c.id}
@@ -154,7 +152,7 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 						</div>
 
 						<div className='form-group'>
-							<label>Описание:</label>
+							<label>Опис:</label>
 							<input
 								type='text'
 								value={editedDeal.description}
@@ -163,7 +161,7 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 						</div>
 
 						<div className='form-group'>
-							<label>Сумма:</label>
+							<label>Сума:</label>
 							<input
 								type='number'
 								value={editedDeal.amount}
@@ -172,7 +170,7 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 						</div>
 
 						<div className='form-group'>
-							<label>Себестоимость:</label>
+							<label>Собівартість:</label>
 							<input
 								type='number'
 								value={editedDeal.costPrice}
@@ -181,7 +179,34 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 						</div>
 
 						<div className='form-group'>
-							<label>Коммерческое предложение:</label>
+							<label>ДР:</label>
+							<input
+								type='number'
+								value={editedDeal.additionalCosts}
+								onChange={(e) => handleInputChange(e, 'additionalCosts')}
+							/>
+						</div>
+
+						<div className='form-group'>
+							<label>Маржа:</label>
+							<input
+								type='number'
+								value={editedDeal.margin.toFixed(2)}
+								readOnly
+							/>
+						</div>
+
+						<div className='form-group'>
+							<label>Коміси:</label>
+							<input
+								type='number'
+								value={editedDeal.commission.toFixed(2)}
+								readOnly
+							/>
+						</div>
+
+						<div className='form-group'>
+							<label>КП:</label>
 							<input
 								type='checkbox'
 								checked={editedDeal.hasCommercialProposal}
@@ -190,7 +215,7 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 						</div>
 
 						<div className='form-group'>
-							<label>Оплачено:</label>
+							<label>Оплата:</label>
 							<input
 								type='checkbox'
 								checked={editedDeal.isPaid}
@@ -199,7 +224,7 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 						</div>
 
 						<div className='form-group'>
-							<label>Доставлено:</label>
+							<label>Поставка:</label>
 							<input
 								type='checkbox'
 								checked={editedDeal.isDelivered}
@@ -208,10 +233,19 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 						</div>
 
 						<div className='form-group'>
+							<label>Проєкт:</label>
+							<input
+								type='checkbox'
+								checked={editedDeal.isProject}
+								onChange={(e) => handleInputChange(e, 'isProject')}
+							/>
+						</div>
+
+						<div className='form-group'>
 							<label>Пресейл:</label>
 							<input
 								type='text'
-								value={editedDeal.presale}
+								value={editedDeal.presale || ''}
 								onChange={(e) => handleInputChange(e, 'presale')}
 							/>
 						</div>
@@ -221,10 +255,10 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 							<select
 								value={editedDeal.status}
 								onChange={(e) => handleInputChange(e, 'status')}>
-								<option value='new'>Новая</option>
-								<option value='in_progress'>В работе</option>
+								<option value='new'>Нова</option>
+								<option value='in_progress'>В роботі</option>
 								<option value='completed'>Завершена</option>
-								<option value='cancelled'>Отменена</option>
+								<option value='cancelled'>Скасована</option>
 							</select>
 						</div>
 
@@ -232,7 +266,7 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 							<button
 								onClick={handleSave}
 								className='icon-button save-button'
-								title='Сохранить'>
+								title='Зберегти'>
 								<i className='material-icons'>save</i>
 							</button>
 							<button
@@ -241,7 +275,7 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 									setEditedDeal(deal);
 								}}
 								className='icon-button cancel-button'
-								title='Отмена'>
+								title='Скасувати'>
 								<i className='material-icons'>close</i>
 							</button>
 						</div>
@@ -255,38 +289,58 @@ export function DealDetails({ deals, customers, onUpdateDeal, onDeleteDeal }: De
 						</div>
 
 						<div className='info-group'>
-							<label>Клиент:</label>
-							<span>{customer?.companyName || 'Неизвестный клиент'}</span>
+							<label>Клієнт:</label>
+							<span>{customer?.companyName || 'Невідомий клієнт'}</span>
 						</div>
 
 						<div className='info-group'>
-							<label>Описание:</label>
+							<label>Опис:</label>
 							<span>{deal.description}</span>
 						</div>
 
 						<div className='info-group'>
-							<label>Сумма:</label>
-							<span>{formatMoney(deal.amount)}</span>
+							<label>Сума:</label>
+							<span className='money'>{formatMoney(deal.amount)}</span>
 						</div>
 
 						<div className='info-group'>
-							<label>Себестоимость:</label>
-							<span>{formatMoney(deal.costPrice)}</span>
+							<label>Собівартість:</label>
+							<span className='money'>{formatMoney(deal.costPrice)}</span>
 						</div>
 
 						<div className='info-group'>
-							<label>Коммерческое предложение:</label>
-							<span>{deal.hasCommercialProposal ? 'Да' : 'Нет'}</span>
+							<label>ДР:</label>
+							<span className='money'>{formatMoney(deal.additionalCosts)}</span>
 						</div>
 
 						<div className='info-group'>
-							<label>Оплачено:</label>
-							<span>{deal.isPaid ? 'Да' : 'Нет'}</span>
+							<label>Маржа:</label>
+							<span className='money'>{formatMoney(deal.margin)}</span>
 						</div>
 
 						<div className='info-group'>
-							<label>Доставлено:</label>
-							<span>{deal.isDelivered ? 'Да' : 'Нет'}</span>
+							<label>Коміси:</label>
+							<span className='money'>{formatMoney(deal.commission)}</span>
+						</div>
+
+						<div className='info-group'>
+							<label>КП:</label>
+							<span>{deal.hasCommercialProposal ? 'Так' : 'Ні'}</span>
+						</div>
+
+						<div className='info-group'>
+							<label>Оплата:</label>
+							<span>{deal.isPaid ? 'Так' : 'Ні'}</span>
+						</div>
+
+						<div className='info-group'>
+							<label>Поставка:</label>
+							<span>{deal.isDelivered ? 'Так' : 'Ні'}</span>
+						</div>
+
+						<div className='info-group'>
+							<label>Проєкт:</label>
+							<span>{deal.isProject ? 'Так' : 'Ні'}</span>
 						</div>
 
 						<div className='info-group'>

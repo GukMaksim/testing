@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { Customer } from '../../types';
 import { CustomerForm } from '../CustomerForm/CustomerForm';
 import './CustomerList.css';
@@ -22,7 +23,7 @@ export function CustomerList({ customers, onAddCustomer, onUpdateCustomer, onDel
 			setShowForm(false);
 			setError(null);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при создании клиента');
+			setError(err instanceof Error ? err.message : 'Помилка при створенні клієнта');
 		}
 	};
 
@@ -32,12 +33,12 @@ export function CustomerList({ customers, onAddCustomer, onUpdateCustomer, onDel
 			setEditingCustomer(null);
 			setError(null);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при обновлении клиента');
+			setError(err instanceof Error ? err.message : 'Помилка при оновленні клієнта');
 		}
 	};
 
 	const handleDelete = async (id: string) => {
-		if (!window.confirm('Вы уверены, что хотите удалить этого клиента?')) {
+		if (!window.confirm('Ви впевнені, що хочете видалити цього клієнта?')) {
 			return;
 		}
 
@@ -45,7 +46,7 @@ export function CustomerList({ customers, onAddCustomer, onUpdateCustomer, onDel
 			await onDeleteCustomer(id);
 			setError(null);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при удалении клиента');
+			setError(err instanceof Error ? err.message : 'Помилка при видаленні клієнта');
 		}
 	};
 
@@ -73,11 +74,11 @@ export function CustomerList({ customers, onAddCustomer, onUpdateCustomer, onDel
 	return (
 		<div className='customer-list'>
 			<div className='customer-list-header'>
-				<h2>Клиенты</h2>
+				<h2>Клієнти</h2>
 				<button
 					onClick={() => setShowForm(true)}
 					className='icon-button primary'
-					title='Добавить клиента'>
+					title='Додати клієнта'>
 					<i className='material-icons'>add</i>
 				</button>
 			</div>
@@ -87,7 +88,7 @@ export function CustomerList({ customers, onAddCustomer, onUpdateCustomer, onDel
 					<i className='material-icons'>search</i>
 					<input
 						type='text'
-						placeholder='Поиск по названию компании, городу или контактному лицу'
+						placeholder='Пошук по назві компанії, місту або контактній особі'
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
@@ -100,20 +101,26 @@ export function CustomerList({ customers, onAddCustomer, onUpdateCustomer, onDel
 				<table>
 					<thead>
 						<tr>
-							<th>Компания</th>
-							<th>Контактное лицо</th>
-							<th>Должность</th>
-							<th>Рабочий телефон</th>
-							<th>Личный телефон</th>
-							<th>Рабочий email</th>
-							<th>Личный email</th>
-							<th>Действия</th>
+							<th>Компанія</th>
+							<th>Контактна особа</th>
+							<th>Посада</th>
+							<th>Робочий телефон</th>
+							<th>Особистий телефон</th>
+							<th>Робочий email</th>
+							<th>Особистий email</th>
+							<th>Дії</th>
 						</tr>
 					</thead>
 					<tbody>
 						{filteredCustomers.map((customer) => (
 							<tr key={customer.id}>
-								<td>{customer.companyName}</td>
+								<td>
+									<Link
+										to={`/customers/${customer.id}`}
+										className='customer-link'>
+										{customer.companyName}
+									</Link>
+								</td>
 								<td>
 									{customer.contactLastName} {customer.contactFirstName}
 								</td>
@@ -127,13 +134,13 @@ export function CustomerList({ customers, onAddCustomer, onUpdateCustomer, onDel
 										<button
 											onClick={() => setEditingCustomer(customer)}
 											className='icon-button warning'
-											title='Редактировать'>
+											title='Редагувати'>
 											<i className='material-icons'>edit</i>
 										</button>
 										<button
 											onClick={() => handleDelete(customer.id)}
 											className='icon-button danger'
-											title='Удалить'>
+											title='Видалити'>
 											<i className='material-icons'>delete</i>
 										</button>
 									</div>

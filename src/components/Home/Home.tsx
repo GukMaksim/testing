@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import type { Customer, Deal } from '../../types/index.js';
+import { formatDate, formatMoney, getStatusText } from '../../utils/formatters.js';
 import './Home.css';
 
 interface HomeProps {
@@ -18,37 +19,16 @@ export function Home({ customers = [], deals = [] }: HomeProps) {
 		navigate(`/deals/${dealId}`);
 	};
 
-	const formatDate = (date: string) => {
-		return new Date(date).toLocaleDateString('ru-RU');
-	};
-
-	const formatMoney = (amount: number) => {
-		return new Intl.NumberFormat('ru-RU', {
-			style: 'currency',
-			currency: 'UAH',
-		}).format(amount);
-	};
-
-	const getStatusText = (status: string) => {
-		const statusMap: Record<string, string> = {
-			new: 'Новая',
-			in_progress: 'В работе',
-			completed: 'Завершена',
-			cancelled: 'Отменена',
-		};
-		return statusMap[status] || status;
-	};
-
 	const getCustomerName = (customerId: string) => {
 		const customer = customers.find((c) => c.id === customerId);
-		return customer?.companyName || 'Неизвестный клиент';
+		return customer?.companyName || 'Невідомий клієнт';
 	};
 
 	if (!Array.isArray(deals) || deals.length === 0) {
 		return (
 			<div className='home'>
 				<h1>Последние сделки</h1>
-				<p className='no-data'>Нет доступных сделок</p>
+				<p className='no-data'>Немає доступних угод</p>
 			</div>
 		);
 	}
@@ -61,14 +41,14 @@ export function Home({ customers = [], deals = [] }: HomeProps) {
 
 	return (
 		<div className='home'>
-			<h1>Последние сделки</h1>
+			<h1>Останні угоди</h1>
 			<table>
 				<thead>
 					<tr>
 						<th>Дата</th>
-						<th>Клиент</th>
-						<th>Описание</th>
-						<th>Сумма</th>
+						<th>Клієнт</th>
+						<th>Опис угоди</th>
+						<th>Сума</th>
 						<th>Статус</th>
 					</tr>
 				</thead>

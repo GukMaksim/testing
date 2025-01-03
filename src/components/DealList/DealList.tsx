@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Customer, Deal } from '../../types';
+import { formatDate, formatMoney, getStatusText } from '../../utils/formatters.js';
 import { DealForm } from '../DealForm/DealForm';
 import './DealList.css';
 
@@ -14,6 +15,7 @@ interface Filters {
 	hasCommercialProposal: boolean;
 	isPaid: boolean;
 	isDelivered: boolean;
+	isProject: boolean;
 }
 
 export function DealList({ deals, customers, onAddDeal }: DealListProps) {
@@ -25,6 +27,7 @@ export function DealList({ deals, customers, onAddDeal }: DealListProps) {
 		hasCommercialProposal: false,
 		isPaid: false,
 		isDelivered: false,
+		isProject: false,
 	});
 
 	const handleSubmit = async (deal: Omit<Deal, 'id'>) => {
@@ -33,13 +36,13 @@ export function DealList({ deals, customers, onAddDeal }: DealListProps) {
 			setShowForm(false);
 			setError(null);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при создании сделки');
+			setError(err instanceof Error ? err.message : 'Помилка при створенні угоди');
 		}
 	};
 
 	const getCustomerName = (customerId: string) => {
 		const customer = customers.find((c) => c.id === customerId);
-		return customer ? customer.companyName : 'Неизвестный клиент';
+		return customer ? customer.companyName : 'Невідомий клієнт';
 	};
 
 	const handleFilterChange = (filterName: keyof Filters) => {
@@ -62,7 +65,8 @@ export function DealList({ deals, customers, onAddDeal }: DealListProps) {
 				const matchesFilters =
 					(!filters.hasCommercialProposal || deal.hasCommercialProposal) &&
 					(!filters.isPaid || deal.isPaid) &&
-					(!filters.isDelivered || deal.isDelivered);
+					(!filters.isDelivered || deal.isDelivered) &&
+					(!filters.isProject || deal.isProject);
 
 				return matchesSearch && matchesStatus && matchesFilters;
 		  })
@@ -81,11 +85,11 @@ export function DealList({ deals, customers, onAddDeal }: DealListProps) {
 	return (
 		<div className='deal-list'>
 			<div className='deal-list-header'>
-				<h2>Сделки</h2>
+				<h2>Угоди</h2>
 				<button
 					onClick={() => setShowForm(true)}
 					className='icon-button primary'
-					title='Добавить сделку'>
+					title='Додати угоду'>
 					<i className='material-icons'>add</i>
 				</button>
 			</div>
@@ -95,7 +99,7 @@ export function DealList({ deals, customers, onAddDeal }: DealListProps) {
 					<i className='material-icons'>search</i>
 					<input
 						type='text'
-						placeholder='Поиск по клиенту или описанию'
+						placeholder='Пошук по клієнту або опису'
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
@@ -105,31 +109,37 @@ export function DealList({ deals, customers, onAddDeal }: DealListProps) {
 					value={statusFilter}
 					onChange={(e) => setStatusFilter(e.target.value)}
 					className='status-filter'>
-					<option value='all'>Все статусы</option>
-					<option value='new'>Новые</option>
-					<option value='in_progress'>В работе</option>
-					<option value='completed'>Завершенные</option>
-					<option value='cancelled'>Отмененные</option>
+					<option value='all'>Всі статуси</option>
+					<option value='new'>Нові</option>
+					<option value='in_progress'>В роботі</option>
+					<option value='completed'>Завершені</option>
+					<option value='cancelled'>Скасовані</option>
 				</select>
 
 				<div className='filter-buttons'>
 					<button
 						className={`filter-button ${filters.hasCommercialProposal ? 'active' : ''}`}
 						onClick={() => handleFilterChange('hasCommercialProposal')}
-						title='Фильтр по КП'>
+						title='Фільтр по КП'>
 						<i className='material-icons'>description</i>
 					</button>
 					<button
 						className={`filter-button ${filters.isPaid ? 'active' : ''}`}
 						onClick={() => handleFilterChange('isPaid')}
-						title='Фильтр по оплате'>
+						title='Фільтр по оплаті'>
 						<i className='material-icons'>payments</i>
 					</button>
 					<button
 						className={`filter-button ${filters.isDelivered ? 'active' : ''}`}
 						onClick={() => handleFilterChange('isDelivered')}
-						title='Фильтр по доставке'>
+						title='Фільтр по поставці'>
 						<i className='material-icons'>local_shipping</i>
+					</button>
+					<button
+						className={`filter-button ${filters.isProject ? 'active' : ''}`}
+						onClick={() => handleFilterChange('isProject')}
+						title='Фільтр по проєктам'>
+						<i className='material-icons'>engineering</i>
 					</button>
 				</div>
 			</div>
@@ -140,21 +150,25 @@ export function DealList({ deals, customers, onAddDeal }: DealListProps) {
 				<table>
 					<thead>
 						<tr>
-							<th>Дата</th>
-							<th>Клиент</th>
-							<th>Описание</th>
-							<th>Сумма</th>
-							<th>Себестоимость</th>
-							<th>Статус</th>
-							<th>КП</th>
-							<th>Оплата</th>
-							<th>Доставка</th>
+							<th className='center'>Дата</th>
+							<th className='center'>Клієнт</th>
+							<th className='center'>Опис</th>
+							<th className='center'>Сума</th>
+							<th className='center'>Собівартість</th>
+							<th className='center'>ДР</th>
+							<th className='center'>Маржа</th>
+							<th className='center'>Коміси</th>
+							<th className='center'>Статус</th>
+							<th className='center'>КП</th>
+							<th className='center'>Оплата</th>
+							<th className='center'>Поставка</th>
+							<th className='center'>Проєкт</th>
 						</tr>
 					</thead>
 					<tbody>
 						{filteredDeals.map((deal) => (
 							<tr key={deal.id}>
-								<td>{new Date(deal.date).toLocaleDateString()}</td>
+								<td>{formatDate(deal.date)}</td>
 								<td>{getCustomerName(deal.customerId)}</td>
 								<td>
 									<Link
@@ -163,21 +177,20 @@ export function DealList({ deals, customers, onAddDeal }: DealListProps) {
 										{deal.description}
 									</Link>
 								</td>
-								<td className='amount'>{deal.amount.toLocaleString()} ₴</td>
-								<td className='cost'>{deal.costPrice.toLocaleString()} ₴</td>
+								<td className='amount'>{formatMoney(deal.amount)}</td>
+								<td className='cost'>{formatMoney(deal.costPrice)}</td>
+								<td className='cost'>{formatMoney(deal.additionalCosts)}</td>
+								<td className='amount'>{formatMoney(deal.margin)}</td>
+								<td className='amount'>{formatMoney(deal.commission)}</td>
 								<td>
-									<span className={`status-badge status-${deal.status}`}>
-										{deal.status === 'new' && 'Новая'}
-										{deal.status === 'in_progress' && 'В работе'}
-										{deal.status === 'completed' && 'Завершена'}
-										{deal.status === 'cancelled' && 'Отменена'}
-									</span>
+									<span className={`status-badge status-${deal.status}`}>{getStatusText(deal.status)}</span>
 								</td>
 								<td className='center'>
 									{deal.hasCommercialProposal && <i className='material-icons'>description</i>}
 								</td>
 								<td className='center'>{deal.isPaid && <i className='material-icons'>payments</i>}</td>
 								<td className='center'>{deal.isDelivered && <i className='material-icons'>local_shipping</i>}</td>
+								<td className='center'>{deal.isProject && <i className='material-icons'>engineering</i>}</td>
 							</tr>
 						))}
 					</tbody>

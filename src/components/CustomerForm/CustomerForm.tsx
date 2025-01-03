@@ -40,7 +40,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 			await onSubmit(cleanedData);
 			setError(null);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Ошибка при сохранении клиента');
+			setError(err instanceof Error ? err.message : 'Помилка при збереженні клієнта');
 		}
 	};
 
@@ -53,12 +53,12 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 		<form
 			onSubmit={handleSubmit}
 			className='customer-form'>
-			<h2>{customer ? 'Редактировать клиента' : 'Новый клиент'}</h2>
+			<h2>{customer ? 'Редагувати клієнта' : 'Новий клієнт'}</h2>
 
 			{error && <div className='error-message'>{error}</div>}
 
 			<div className='form-group'>
-				<label htmlFor='companyName'>Название компании:</label>
+				<label htmlFor='companyName'>Назва компанії:</label>
 				<input
 					type='text'
 					id='companyName'
@@ -70,7 +70,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='edrpou'>ЕДРПОУ:</label>
+				<label htmlFor='edrpou'>ЄДРПОУ:</label>
 				<input
 					type='text'
 					id='edrpou'
@@ -78,12 +78,12 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 					value={formData.edrpou}
 					onChange={handleInputChange}
 					pattern='^\d{8}$'
-					title='ЕДРПОУ должен содержать 8 цифр'
+					title='ЄДРПОУ повинен містити 8 цифр'
 				/>
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='inn'>ИНН:</label>
+				<label htmlFor='inn'>ІПН:</label>
 				<input
 					type='text'
 					id='inn'
@@ -91,12 +91,12 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 					value={formData.inn}
 					onChange={handleInputChange}
 					pattern='^\d{10}$'
-					title='ИНН должен содержать 10 цифр'
+					title='ІПН повинен містити 10 цифр'
 				/>
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='city'>Город:</label>
+				<label htmlFor='city'>Місто:</label>
 				<input
 					type='text'
 					id='city'
@@ -107,7 +107,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='address'>Адрес:</label>
+				<label htmlFor='address'>Адреса:</label>
 				<input
 					type='text'
 					id='address'
@@ -118,7 +118,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='contactLastName'>Фамилия контактного лица:</label>
+				<label htmlFor='contactLastName'>Прізвище контактної особи:</label>
 				<input
 					type='text'
 					id='contactLastName'
@@ -129,7 +129,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='contactFirstName'>Имя контактного лица:</label>
+				<label htmlFor='contactFirstName'>Ім&apos;я контактної особи:</label>
 				<input
 					type='text'
 					id='contactFirstName'
@@ -140,7 +140,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='contactPosition'>Должность:</label>
+				<label htmlFor='contactPosition'>Посада:</label>
 				<input
 					type='text'
 					id='contactPosition'
@@ -151,7 +151,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='contactWorkPhone'>Рабочий телефон:</label>
+				<label htmlFor='contactWorkPhone'>Робочий телефон:</label>
 				<input
 					type='tel'
 					id='contactWorkPhone'
@@ -159,12 +159,12 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 					value={formData.contactWorkPhone}
 					onChange={handleInputChange}
 					pattern='^\+380\d{9}$'
-					title='Телефон должен быть в формате +380XXXXXXXXX'
+					title='Телефон повинен бути у форматі +380XXXXXXXXX'
 				/>
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='contactPersonalPhone'>Личный телефон:</label>
+				<label htmlFor='contactPersonalPhone'>Особистий телефон:</label>
 				<input
 					type='tel'
 					id='contactPersonalPhone'
@@ -172,12 +172,12 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 					value={formData.contactPersonalPhone}
 					onChange={handleInputChange}
 					pattern='^\+380\d{9}$'
-					title='Телефон должен быть в формате +380XXXXXXXXX'
+					title='Телефон повинен бути у форматі +380XXXXXXXXX'
 				/>
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='contactWorkEmail'>Рабочий email:</label>
+				<label htmlFor='contactWorkEmail'>Робочий email:</label>
 				<input
 					type='email'
 					id='contactWorkEmail'
@@ -188,7 +188,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 			</div>
 
 			<div className='form-group'>
-				<label htmlFor='contactPersonalEmail'>Личный email:</label>
+				<label htmlFor='contactPersonalEmail'>Особистий email:</label>
 				<input
 					type='email'
 					id='contactPersonalEmail'
@@ -202,14 +202,14 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
 				<button
 					type='submit'
 					className='icon-button success'
-					title='Сохранить'>
+					title='Зберегти'>
 					<i className='material-icons'>save</i>
 				</button>
 				<button
 					type='button'
 					onClick={onCancel}
 					className='icon-button secondary'
-					title='Отмена'>
+					title='Скасувати'>
 					<i className='material-icons'>close</i>
 				</button>
 			</div>

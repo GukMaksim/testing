@@ -114,6 +114,7 @@ td {
 	padding: 12px;
 	text-align: left;
 	border-bottom: 1px solid #eee;
+	font-size: 14px;
 }
 
 th {
@@ -141,6 +142,7 @@ tr:hover {
 	text-align: right;
 	font-family: monospace;
 	white-space: nowrap;
+	min-width: 100px;
 }
 
 .center {

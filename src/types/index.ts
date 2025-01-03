@@ -26,6 +26,10 @@ export interface Deal {
 	isPaid: boolean;
 	isDelivered: boolean;
 	presale?: string;
+	isProject: boolean;
+	additionalCosts: number;
+	margin: number;
+	commission: number;
 }
 
 export interface ApiResponse<T> {

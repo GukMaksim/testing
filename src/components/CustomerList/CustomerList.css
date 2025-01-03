@@ -128,3 +128,12 @@ tr:hover {
 	border: 1px solid #f5c6cb;
 	border-radius: 4px;
 }
+
+.customer-link {
+	color: #007bff;
+	text-decoration: none;
+}
+
+.customer-link:hover {
+	text-decoration: underline;
+}

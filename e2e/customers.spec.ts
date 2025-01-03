@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Страница клиентов', () => {
-	test('должна отображать список клиентов', async ({ page }) => {
+test.describe('Сторінка клієнтів', () => {
+	test('повинна відображати список клієнтів', async ({ page }) => {
 		await page.goto('/customers');
 
 		// Проверяем наличие таблицы клиентов
@@ -10,17 +10,17 @@ test.describe('Страница клиентов', () => {
 
 		// Проверяем заголовки столбцов
 		const headers = await page.getByRole('columnheader').allTextContents();
-		expect(headers).toContain('Компания');
-		expect(headers).toContain('ЕДРПОУ');
-		expect(headers).toContain('Город');
-		expect(headers).toContain('Контактное лицо');
+		expect(headers).toContain('Компанія');
+		expect(headers).toContain('ЄДРПОУ');
+		expect(headers).toContain('Місто');
+		expect(headers).toContain('Контактна особа');
 	});
 
-	test('должна позволять фильтровать клиентов', async ({ page }) => {
+	test('повинна дозволяти фільтрувати клієнтів', async ({ page }) => {
 		await page.goto('/customers');
 
 		// Вводим текст в поле поиска
-		const searchInput = await page.getByPlaceholder('Поиск по названию компании');
+		const searchInput = await page.getByPlaceholder('Пошук по назві компанії');
 		await searchInput.fill('Test Company');
 
 		// Проверяем, что список отфильтрован
@@ -31,22 +31,22 @@ test.describe('Страница клиентов', () => {
 		expect(rows).toBeGreaterThan(0);
 	});
 
-	test('должна позволять добавлять нового клиента', async ({ page }) => {
+	test('повинна дозволяти додавати нового клієнта', async ({ page }) => {
 		await page.goto('/customers');
 
 		// Нажимаем кнопку добавления
-		await page.getByRole('button', { name: 'Добавить клиента' }).click();
+		await page.getByRole('button', { name: 'Додати клієнта' }).click();
 
 		// Заполняем форму
-		await page.getByLabel('Название компании').fill('New Test Company');
-		await page.getByLabel('ЕДРПОУ').fill('98765432');
-		await page.getByLabel('Город').fill('New Test City');
-		await page.getByLabel('Адрес').fill('New Test Address');
-		await page.getByLabel('Фамилия').fill('New Test');
-		await page.getByLabel('Имя').fill('New Test');
-		await page.getByLabel('Должность').fill('New Position');
-		await page.getByLabel('Рабочий телефон').fill('+380501234567');
-		await page.getByLabel('Рабочий email').fill('newtest@work.com');
+		await page.getByLabel('Назва компанії').fill('New Test Company');
+		await page.getByLabel('ЄДРПОУ').fill('98765432');
+		await page.getByLabel('Місто').fill('New Test City');
+		await page.getByLabel('Адреса').fill('New Test Address');
+		await page.getByLabel('Прізвище контактної особи').fill('New Test');
+		await page.getByLabel('Ім\'я').fill('New Test');
+		await page.getByLabel('Посада').fill('New Position');
+		await page.getByLabel('Робочий телефон').fill('+380501234567');
+		await page.getByLabel('Робочий email').fill('newtest@work.com');
 
 		// Сохраняем
 		await page.getByRole('button', { name: 'Сохранить' }).click();
@@ -56,21 +56,21 @@ test.describe('Страница клиентов', () => {
 		await expect(newCustomerRow).toBeVisible();
 	});
 
-	test('должна отображать ошибки валидации при добавлении клиента', async ({ page }) => {
+	test('повинна відображати помилки валідації при додаванні клієнта', async ({ page }) => {
 		await page.goto('/customers');
 
 		// Нажимаем кнопку добавления
 		await page.getByRole('button', { name: 'Добавить клиента' }).click();
 
 		// Пытаемся сохранить пустую форму
-		await page.getByRole('button', { name: 'Сохранить' }).click();
+		await page.getByRole('button', { name: 'Зберегти' }).click();
 
 		// Проверяем наличие сообщений об ошибках
-		const errors = await page.getByText('Обязательное поле').count();
+		const errors = await page.getByText('Обов\'язкове поле').count();
 		expect(errors).toBeGreaterThan(0);
 	});
 
-	test('должна позволять редактировать клиента', async ({ page }) => {
+	test('повинна дозволяти редагувати клієнта', async ({ page }) => {
 		await page.goto('/customers');
 
 		// Находим клиента для редактирования
@@ -78,13 +78,13 @@ test.describe('Страница клиентов', () => {
 			.getByRole('row')
 			.filter({ hasText: /Test Company/ })
 			.first();
-		await customerRow.getByRole('button', { name: 'Редактировать' }).click();
+		await customerRow.getByRole('button', { name: 'Редагувати' }).click();
 
 		// Изменяем данные
-		await page.getByLabel('Город').fill('Updated City');
+		await page.getByLabel('Місто').fill('Updated City');
 
 		// Сохраняем изменения
-		await page.getByRole('button', { name: 'Сохранить' }).click();
+		await page.getByRole('button', { name: 'Зберегти' }).click();
 
 		// Проверяем, что изменения сохранились
 		const updatedRow = await page.getByRole('row').filter({ hasText: /Updated City/ });

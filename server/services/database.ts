@@ -14,6 +14,67 @@ export class SQLiteDatabase {
 
 	async init(): Promise<void> {
 		await this.createTables();
+		await this.migrateDatabase();
+	}
+
+	private async migrateDatabase(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			this.db.serialize(() => {
+				// Проверяем существование столбцов и добавляем их, если они отсутствуют
+				this.db.run(`PRAGMA foreign_keys=off;`);
+
+				// Начинаем транзакцию
+				this.db.run('BEGIN TRANSACTION');
+
+				// Получаем информацию о столбцах
+				this.db.all('PRAGMA table_info(deals)', (err, columns) => {
+					if (err) {
+						this.db.run('ROLLBACK');
+						reject(err);
+						return;
+					}
+
+					const columnNames = columns.map((col: any) => col.name);
+
+					// Добавляем отсутствующие столбцы
+					const alterTableQueries = [];
+
+					if (!columnNames.includes('isProject')) {
+						alterTableQueries.push('ALTER TABLE deals ADD COLUMN isProject BOOLEAN NOT NULL DEFAULT 0');
+					}
+					if (!columnNames.includes('additionalCosts')) {
+						alterTableQueries.push('ALTER TABLE deals ADD COLUMN additionalCosts REAL NOT NULL DEFAULT 0');
+					}
+					if (!columnNames.includes('margin')) {
+						alterTableQueries.push('ALTER TABLE deals ADD COLUMN margin REAL NOT NULL DEFAULT 0');
+					}
+					if (!columnNames.includes('commission')) {
+						alterTableQueries.push('ALTER TABLE deals ADD COLUMN commission REAL NOT NULL DEFAULT 0');
+					}
+
+					// Выполняем запросы на изменение таблицы
+					alterTableQueries.forEach((query) => {
+						this.db.run(query, (err) => {
+							if (err) {
+								console.error('Error executing query:', query, err);
+							}
+						});
+					});
+
+					// Завершаем транзакцию
+					this.db.run('COMMIT', (err) => {
+						if (err) {
+							console.error('Error committing transaction:', err);
+							this.db.run('ROLLBACK');
+							reject(err);
+						} else {
+							this.db.run('PRAGMA foreign_keys=on');
+							resolve();
+						}
+					});
+				});
+			});
+		});
 	}
 
 	private createTables(): Promise<void> {
@@ -53,6 +114,10 @@ export class SQLiteDatabase {
 						isPaid BOOLEAN NOT NULL,
 						isDelivered BOOLEAN NOT NULL,
 						presale TEXT,
+						isProject BOOLEAN NOT NULL DEFAULT 0,
+						additionalCosts REAL NOT NULL DEFAULT 0,
+						margin REAL NOT NULL DEFAULT 0,
+						commission REAL NOT NULL DEFAULT 0,
 						FOREIGN KEY (customerId) REFERENCES customers(id)
 					)
 				`,
@@ -187,8 +252,9 @@ export class SQLiteDatabase {
 			const sql = `
 				INSERT INTO deals (
 					customerId, description, amount, costPrice, date,
-					status, hasCommercialProposal, isPaid, isDelivered, presale
-				) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+					status, hasCommercialProposal, isPaid, isDelivered, presale,
+					isProject, additionalCosts, margin, commission
+				) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 			`;
 			const params = [
 				deal.customerId,
@@ -201,6 +267,10 @@ export class SQLiteDatabase {
 				deal.isPaid ? 1 : 0,
 				deal.isDelivered ? 1 : 0,
 				deal.presale,
+				deal.isProject ? 1 : 0,
+				deal.additionalCosts,
+				deal.margin,
+				deal.commission,
 			];
 
 			this.db.run(sql, params, function (err) {
@@ -237,6 +307,7 @@ export class SQLiteDatabase {
 							hasCommercialProposal: !!row.hasCommercialProposal,
 							isPaid: !!row.isPaid,
 							isDelivered: !!row.isDelivered,
+							isProject: !!row.isProject,
 						}))
 					);
 			});
@@ -266,7 +337,8 @@ export class SQLiteDatabase {
 			UPDATE deals SET
 				customerId = ?, description = ?, amount = ?, costPrice = ?,
 				date = ?, status = ?, hasCommercialProposal = ?, isPaid = ?,
-				isDelivered = ?, presale = ?
+				isDelivered = ?, presale = ?, isProject = ?, additionalCosts = ?,
+				margin = ?, commission = ?
 			WHERE id = ?
 		`;
 		const params = [
@@ -280,6 +352,10 @@ export class SQLiteDatabase {
 			deal.isPaid ? 1 : 0,
 			deal.isDelivered ? 1 : 0,
 			deal.presale,
+			deal.isProject ? 1 : 0,
+			deal.additionalCosts,
+			deal.margin,
+			deal.commission,
 			id,
 		];
 

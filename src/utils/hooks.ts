@@ -25,19 +25,3 @@ export function useSortedDeals(deals: Deal[] = []) {
 		});
 	}, [deals]);
 }
-
-export function useError() {
-	return useMemo(() => {
-		let error: string | null = null;
-
-		return {
-			setError: (message: string) => {
-				error = message;
-			},
-			getError: () => error,
-			clearError: () => {
-				error = null;
-			},
-		};
-	}, []);
-}
